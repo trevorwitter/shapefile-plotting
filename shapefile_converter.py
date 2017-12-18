@@ -29,6 +29,18 @@ class get_shape_file():
         self.ypts = all_poly_lats
         self.xpts = all_poly_lons
 
+    def latlon_to_xy(self):
+        """Converts polygon latitude and longitude to xy coordinates"""
+        NYSP1983 = pyproj.Proj(init="ESRI:102718", preserve_units=True)
+        all_poly_ypts = [[(NYSP1983(x[0],x[1]))[1]
+                          for x in zip(a[0],a[1])]
+                          for a in zip(self.xpts, self.ypts)]
+        all_poly_xpts = [[(NYSP1983(x[0],x[1]))[0]
+                          for x in zip(a[0],a[1])]
+                          for a in zip(self.xpts, self.ypts)]
+        self.ypts = all_poly_ypts
+        self.xpts = all_poly_xpts
+        
     def create_block_df(self):
         """Creates dataframe with block, borough and x and y coordinates"""
         sf = shapefile.Reader(self.file_path)
